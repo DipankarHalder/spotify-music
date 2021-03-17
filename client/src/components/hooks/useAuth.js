@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 
 export default function useAuth(code) {
   const apiPath = 'http://localhost:3001';
-  const [accessToken, setAccessToken] = useState('');
-  const [refreshToken, setRefreshToken] = useState('');
-  const [expiresIn, setExpiresIn] = useState('');
+  const [accessToken, setAccessToken] = useState();
+  const [refreshToken, setRefreshToken] = useState();
+  const [expiresIn, setExpiresIn] = useState();
 
   // for access token
   useEffect(() => {
