@@ -18,6 +18,7 @@ export default function Dashboard({ code }) {
   const [playTrack, setPlayTrack] = useState();
   const [lyrics, setLyrics] = useState('');
   const [artistTopTracks, setArtistTopTracks] = useState([]);
+  const [userInfo, setUserInfo] = useState('');
 
   function selectTrack(track) {
     setPlayTrack(track);
@@ -25,7 +26,6 @@ export default function Dashboard({ code }) {
     setLyrics('');
   }
 
-  // for play track
   useEffect(() => {
     if (!playTrack) return
     axios
@@ -39,13 +39,11 @@ export default function Dashboard({ code }) {
       .catch(err => console.log(err));
   }, [playTrack])
 
-  // for token verification
   useEffect(() => {
     if(!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
   }, [accessToken]);
 
-  // for search result
   useEffect(() => {
     if(!search) return setSearchResults([]);
     if(!accessToken) return;
@@ -73,7 +71,6 @@ export default function Dashboard({ code }) {
       return () => cancelCall = true;
   }, [search, accessToken]);
 
-  // for get artist top tracks
   useEffect(() => {
     if(!accessToken) return;
     spotifyApi
@@ -83,47 +80,76 @@ export default function Dashboard({ code }) {
         setArtistTopTracks(res.body.tracks)
       })
       .catch(err => console.log(err));
+
+    spotifyApi
+      .getMe()
+      .then((data) => {
+        console.log(data.body);
+        setUserInfo(data.body);
+      })
+      .catch(err => console.log(err));
   }, [accessToken])
 
   return (
-    <div>
-      <div className="any">
-        <input 
-          type="text" 
-          placeholder="Search songs / artists" 
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-      </div>
-      <div className="any">
-        {searchResults.map(track => (
-          <SearchTrack 
-            key={track.uri}
-            track={track}
-            selectTrack={selectTrack} 
-          />
-        ))}
-      </div>
-      <div className="any">
-        {searchResults.length === 0 && (
-          <div className="any">
-            {lyrics}
+    <div className="app-main-wrapper">
+      <div className="app-container">
+        <div className="app-cover">
+          <div className="app-search-section">
+            <input 
+              type="text" 
+              placeholder="Search songs / artists" 
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
           </div>
-        )}
-      </div>
-      <div className="any">
-        {artistTopTracks && artistTopTracks.map(item => (
-          <ArtistTopTracks 
-            key={item.uri}
-            item={item} 
-          />
-        ))}
-      </div>
-      <div className="any">
-        {/* <PlayTracks 
-          accessToken={accessToken} 
-          trackUri={playTrack?.uri} 
-        /> */}
+          <div className="app-search-result-item">
+            {searchResults.map(track => (
+              <SearchTrack 
+                key={track.uri}
+                track={track}
+                selectTrack={selectTrack} 
+              />
+            ))}
+          </div>
+          <div className="any">
+            {searchResults.length === 0 && (
+              <div className="any">
+                {lyrics}
+              </div>
+            )}
+          </div>
+          <div className="app-artist-top-tracks">
+            <h4>Top Artists &amp; Tracks</h4>
+            <div className="app-track-list">
+              {artistTopTracks && artistTopTracks.map(item => (
+                <ArtistTopTracks 
+                  key={item.uri}
+                  item={item} 
+                />
+              ))}
+            </div>
+          </div>
+          <div className="any">
+            {/* <PlayTracks 
+              accessToken={accessToken} 
+              trackUri={playTrack?.uri} 
+            /> */}
+          </div>
+        </div>
+
+        <div className="app-user-info">
+            {userInfo && (
+              <>
+                {Array.isArray(userInfo.images) && !userInfo.images.length ? 
+                  (<span></span>) : 
+                  (<span><img src={userInfo.images[0].url} alt={userInfo.display_name} /></span>)
+                }
+                <h3>{userInfo.display_name}</h3>
+                <p>{userInfo.email}</p>
+                <p>Followers: {userInfo.followers.total}</p>
+              </>
+            )}
+        </div>
       </div>
     </div>
   )

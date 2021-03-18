@@ -5,7 +5,7 @@ export default function SearchTrack({ track, selectTrack }) {
   }
 
   return (
-    <div onClick={playFromList}>
+    <div className="app-search-res-items-list" onClick={playFromList}>
       <img src={track.albumUrl} alt={track.title} />
       <p>{track.title}</p>
       <p>{track.artist}</p>

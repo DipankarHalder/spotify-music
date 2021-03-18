@@ -5,13 +5,11 @@ export default function ArtistTopTracks({ item }) {
   // function playFromList() {
   //   selectTrack(item);
   // }
-
-  console.log(item);
   
   return (
-    <div>
+    <div className="app-top-songs-artists-list">
       <img src={item.album.images[0].url} alt={item.album.name} />
-      <p>{item.name}</p>
+      <h6>{item.name}</h6>
       <p>{item.artists[0].name}</p>
     </div>
   )
